@@ -1,113 +1,151 @@
-import Image from "next/image";
+'use client';
+
+import React, { useState, useEffect } from 'react';
+const jobListings = [
+  {
+    "name": "Notion",
+    "latest_round": "Series C",
+    "title": "Creative Lead, Web",
+    "department": "Marketing",
+    "listing_location": "New York, New York",
+    //"listing_job_description": "(job description content for Notion)"
+  },
+  {
+    "name": "Candy",
+    "latest_round": "",
+    "title": "Staff Frontend Software Engineer",
+    "department": "Technology",
+    "listing_location": "New York, NY",
+    //"listing_job_description": "(job description content for Candy)"
+  },
+  {
+    "name": "Cake",
+    "latest_round": "Pre Seed",
+    "title": "Senior Frontend Engineer / 資深前端工程師",
+    "department": "Product",
+    "listing_location": "Taipei",
+    //"listing_job_description": "(job description content for Cake)"
+  },
+  {
+    "name": "10up",
+    "latest_round": "",
+    "title": "Associate Director of JavaScript Engineering",
+    "department": "JavaScript Engineering",
+    "listing_location": "Remote",
+    //"listing_job_description": "(job description content for 10up)"
+  },
+  {
+    "name": "Privy",
+    "latest_round": "Seed",
+    "title": "Staff Fullstack Software Engineer",
+    "department": "Engineering",
+    "listing_location": "New York",
+    //"listing_job_description": "(job description content for Privy)"
+  },
+  {
+    "name": "UpCodes",
+    "latest_round": "Series A",
+    "title": "Sr. Software Engineer",
+    "department": "Engineering",
+    "listing_location": "Remote",
+    //"listing_job_description": "(job description content for UpCodes)"
+  },
+  {
+    "name": "Fruition",
+    "latest_round": "",
+    "title": "CI/CD - Site Reliability Engineer",
+    "department": "",
+    "listing_location": "Denver or Remote",
+    //"listing_job_description": "(job description content for Fruition)"
+  },
+  {
+    "name": "Lattice",
+    "latest_round": "",
+    "title": "Software Engineer, Talent Suite",
+    "department": "Engineering",
+    "listing_location": "SF, NYC, Remote",
+    //"listing_job_description": "(job description content for Lattice)"
+  },
+  {
+    "name": "Summer Health",
+    "latest_round": "Series A",
+    "title": "Staff Engineer, AI",
+    "department": "Engineering",
+    "listing_location": "New York Office",
+    //"listing_job_description": "(job description content for Summer Health)"
+  },
+  {
+    "name": "Ketryx",
+    "latest_round": "Series A",
+    "title": "Senior Developer",
+    "department": "Engineering",
+    "listing_location": "Vienna, Austria",
+    //"listing_job_description": "(job description content for Ketryx)"
+  }
+];
 
 export default function Home() {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+
+  const handleChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+  }
+
+  const vectorizeAndStore = async () => {
+    const res = await fetch('/api/build-vectors', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        jobListings: jobListings,
+      }),
+    });
+    const data = await res.json();
+    return data
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
+      <main className="flex min-h-screen flex-col items-center justify-between p-24">
+
+        <button onClick={vectorizeAndStore}>Build Vectors</button>
+
+
+        <div>
+          <form
+              onSubmit={handleSubmit}>
+            <input
+                type="text"
+                placeholder="Search..."
+                value={searchTerm}
+                onChange={handleChange}
             />
-          </a>
+            <button type="submit"> Search</button>
+          </form>
+          <div className="mt-8">
+            {jobListings.map((jobListing, index) => (
+                <div key={index} className="w-full h-64 object-cover">
+
+                  <div>
+                    <div>{jobListing.title}</div>
+                    <div>{jobListing.name}</div>
+                    <p>{`Latest Round: ${jobListing.latest_round}`}</p>
+                    <p>{`Listing location: ${jobListing.latest_round}`}</p>
+                    <p>{`Department: ${jobListing.latest_round}`}</p>
+
+
+                  </div>
+                </div>
+            ))}
+          </div>
+          <button>Setup</button>
         </div>
-      </div>
 
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+      </main>
   );
 }
